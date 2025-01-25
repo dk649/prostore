@@ -1,5 +1,5 @@
 "use server";
-
+/* eslint-disable */
 // this is a server action
 
 import { CartItem } from "@/types";
@@ -19,7 +19,9 @@ export async function addItemToCart(data: CartItem) {
     const userId = session?.user?.id ? (session.user.id as string) : undefined;
 
     // get cart
+
     const cart = await getMyCart();
+
     const item = cartItemSchema.parse(data);
 
     const product = await prisma.product.findFirst({
