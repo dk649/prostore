@@ -17,3 +17,11 @@ export const signUpDefaultValues = {
   password: "",
   confirmPassword: "",
 };
+
+export const shippingAddressDefaultValues = {
+  fullName: "Ursula Moran",
+  streetAddress: "123 Main Street",
+  city: "Sligo",
+  postCode: "FR35DJK",
+  country: "Ireland",
+};
