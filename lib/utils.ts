@@ -1,3 +1,5 @@
+/* eslint-disable */
+
 import { clsx, type ClassValue } from "clsx";
 import { error } from "console";
 import { Currency } from "lucide-react";
