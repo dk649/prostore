@@ -78,6 +78,7 @@ export const config = {
 
     async jwt({ token, user, trigger, session }: any) {
       if (user) {
+        token.id = user.id;
         token.role = user.role;
         if (user.name === "NO_NAME") {
           token.name = user.email!.split("@")[0];
@@ -88,10 +89,51 @@ export const config = {
             data: { name: token.name },
           });
         }
+
+        if (trigger === "signIn" || trigger === "signUp") {
+          const cookiesObject = await cookies();
+          const sessionCartId = cookiesObject.get("sessionCartId")?.value;
+
+          if (sessionCartId) {
+            const sessionCart = await prisma.cart.findFirst({
+              where: { sessionCartId },
+            });
+
+            if (sessionCart) {
+              await prisma.cart.deleteMany({
+                where: { userId: user.id },
+              });
+
+              await prisma.cart.update({
+                where: { id: sessionCart.id },
+                data: { userId: user.id },
+              });
+            }
+          }
+        }
       }
       return token;
     },
     authorized({ request, auth }: any) {
+      // array of regex patterns of paths we want to protect
+
+      const protectedPaths = [
+        /\/shipping-address/,
+        /\/payment-method/,
+        /\/place-order/,
+        /\/profile/,
+        /\/user\/(.*)/,
+        /\/order\/(.*)/,
+        /\/admin/,
+      ];
+
+      // Get  pathname from the request url object
+
+      const { pathname } = request.nextUrl;
+
+      //  Check if  user is not authenticated  and accessing  a protected path
+
+      if (!auth && protectedPaths.some((p) => p.test(pathname))) return false;
       // check fot the session cart cookie
 
       if (!request.cookies.get("sessionCartId")) {
