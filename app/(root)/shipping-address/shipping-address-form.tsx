@@ -1,6 +1,5 @@
 "use client";
 
-/* eslint-disable */
 import { ShippingAddress } from "@/types";
 import { useRouter } from "next/navigation";
 import { useToast } from "@/hooks/use-toast";
